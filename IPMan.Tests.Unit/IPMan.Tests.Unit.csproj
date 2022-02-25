@@ -15,4 +15,8 @@
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IPMan.Core\IPMan.Core.csproj" />
+  </ItemGroup>
+
 </Project>

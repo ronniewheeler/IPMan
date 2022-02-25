@@ -1,2 +1,4 @@
 ﻿.vs
 IPMan.Tests.Unit/obj
+*/obj
+*/bin

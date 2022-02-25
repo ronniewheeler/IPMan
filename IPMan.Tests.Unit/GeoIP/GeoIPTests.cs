@@ -1,12 +1,12 @@
-using IPMan.Core;
 using NUnit.Framework;
 using Moq;
+using IPMan.Core.Services;
 
 namespace IPMan.Tests.Unit.GeoIP
 {
     public class Tests
     {
-        private readonly IGeoIPService _geoIPService;
+        private IGeoIPService? _geoIPService;
 
         [SetUp]
         public void Setup()
@@ -17,19 +17,21 @@ namespace IPMan.Tests.Unit.GeoIP
         [Test]
         public void GetLocationByIP_ReturnsGeoIP()
         {
-            var geoIP = _geoIPService.GetLocationByIP("172.67.74.8");
+            var geoIP = _geoIPService?.GetLocationByIPAsync("172.67.74.8").Result;
             Assert.IsNotNull(geoIP);
-            Assert.IsInstanceOf<GetIP>(geoIP);
+            Assert.IsInstanceOf<Core.Entities.Geo.GeoIP>(geoIP);
         }
 
         private void SetupMockData()
         {
-            _geoIPService = new Mock<IGeoIPService>();
-            _geoIPService.Setup(x => x.GetLocationByIP())
+            var mockGeoServie = new Mock<IGeoIPService>();
+            mockGeoServie.Setup(x => x.GetLocationByIPAsync("172.67.74.8").Result)
                 .Returns(MockGeoIP);
+
+            _geoIPService = mockGeoServie.Object;
         }
 
-        private const GeoIP MockGeoIP = new GeoIP
+        private static Core.Entities.Geo.GeoIP MockGeoIP => new()
         {
             Latitude = (double)22.488548596764645,
             Longitude = (double)114.1368804129255,
@@ -40,11 +42,11 @@ namespace IPMan.Tests.Unit.GeoIP
             Region = "Central and Western",
             City = "Fanling",
             Zip = null,
-            Location = new GetLocation
+            Location = new Core.Entities.Geo.GeoLocation
             {
                 Id = 1818209,
                 Capital = "City of Victoria",
-                Languages = new List<Language>(),
+                Languages = null,
                 CallingCode = "852"
             }
         };
